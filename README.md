@@ -65,3 +65,8 @@ ADMIN_TOKEN=replace-with-a-strong-random-string
 ## 部署
 
 - 只使用 Nginx（静态托管 + 反代 API）：见 [DEPLOY_NGINX.md](docs/DEPLOY_NGINX.md)
+
+## 编码与测试
+
+- 编码规范：见 [ENCODING.md](docs/ENCODING.md)
+- 测试报告：见 [TEST_REPORT.md](docs/TEST_REPORT.md)

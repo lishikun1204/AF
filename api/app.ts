@@ -11,6 +11,7 @@ import dotenv from 'dotenv'
 import topicRoutes from './routes/topics.js'
 import opinionRoutes from './routes/opinions.js'
 import adminRoutes from './routes/admin.js'
+import { jsonBody } from './middleware/jsonBody.js'
 
 // load env
 dotenv.config()
@@ -18,7 +19,8 @@ dotenv.config()
 const app: express.Application = express()
 
 app.use(cors())
-app.use(express.json({ limit: '10mb' }))
+app.use(express.raw({ type: ['application/json', 'application/*+json'], limit: '10mb' }))
+app.use(jsonBody)
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 app.use('/api/topics', topicRoutes)

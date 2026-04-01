@@ -34,7 +34,7 @@ export async function apiPost<T>(path: string, body: unknown, init?: RequestInit
     method: 'POST',
     ...init,
     headers: {
-      'content-type': 'application/json',
+      'content-type': 'application/json; charset=utf-8',
       ...(init?.headers ?? {}),
     },
     body: JSON.stringify(body ?? {}),
@@ -45,4 +45,3 @@ export async function apiPost<T>(path: string, body: unknown, init?: RequestInit
   }
   return json.data as T
 }
-

@@ -24,8 +24,13 @@ function resolveDataDir(): string {
   return path.join(__dirname, '..', 'data')
 }
 
-const dataDir = resolveDataDir()
-const dataFilePath = path.join(dataDir, 'forum.json')
+function getDataPaths(): { dataDir: string; dataFilePath: string } {
+  const dir = resolveDataDir()
+  return {
+    dataDir: dir,
+    dataFilePath: path.join(dir, 'forum.json'),
+  }
+}
 
 function nowIso(): string {
   return new Date().toISOString()
@@ -78,6 +83,7 @@ function makeInitialData(): ForumData {
 }
 
 async function ensureStore(): Promise<void> {
+  const { dataDir, dataFilePath } = getDataPaths()
   await fs.mkdir(dataDir, { recursive: true })
   try {
     await fs.access(dataFilePath)
@@ -89,6 +95,7 @@ async function ensureStore(): Promise<void> {
 
 async function readData(): Promise<ForumData> {
   await ensureStore()
+  const { dataFilePath } = getDataPaths()
   const raw = await fs.readFile(dataFilePath, 'utf-8')
   const parsed = JSON.parse(raw) as Partial<ForumData>
   return {
@@ -98,6 +105,7 @@ async function readData(): Promise<ForumData> {
 }
 
 async function writeData(data: ForumData): Promise<void> {
+  const { dataDir, dataFilePath } = getDataPaths()
   await fs.mkdir(dataDir, { recursive: true })
   const tmpPath = `${dataFilePath}.tmp`
   const json = JSON.stringify(data, null, 2)
