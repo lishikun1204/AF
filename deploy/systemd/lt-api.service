@@ -1,0 +1,15 @@
+[Unit]
+Description=lt anonymous forum API
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/srv/lt
+EnvironmentFile=/etc/lt-api.env
+ExecStart=/usr/bin/env pnpm run server:prod
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
+

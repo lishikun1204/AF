@@ -14,7 +14,17 @@ type ForumData = {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const dataDir = path.join(__dirname, '..', 'data')
+function resolveDataDir(): string {
+  const configured = process.env.LT_DATA_DIR
+  if (configured && configured.trim()) return configured.trim()
+  if (process.env.VERCEL) {
+    const tmpBase = process.env.TMPDIR || '/tmp'
+    return path.join(tmpBase, 'lt-forum')
+  }
+  return path.join(__dirname, '..', 'data')
+}
+
+const dataDir = resolveDataDir()
 const dataFilePath = path.join(dataDir, 'forum.json')
 
 function nowIso(): string {
@@ -189,4 +199,3 @@ export async function getOpinion(opinionId: string): Promise<Opinion | null> {
   const data = await readData()
   return data.opinions.find((o) => o.id === opinionId) ?? null
 }
-

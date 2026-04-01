@@ -1,57 +1,67 @@
-# React + TypeScript + Vite
+# 匿名在线论坛（话题讨论 + 意见箱）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个“无需登录、匿名参与”的在线论坛：
+- 公开区：任何人可浏览/发起话题、发表评论。
+- 意见箱：任何人可匿名提交意见；普通用户不可查看已提交意见；仅管理员可查看。
+- 隐私：除管理员外不记录用户信息（后端不保存用户身份字段）。
+- 管理员只读：管理员不能发帖/评论/提交意见，只能查看。
 
-Currently, two official plugins are available:
+## 本地开发
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1) 安装依赖
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2) 启动（推荐）
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+pnpm dev
 ```
+
+- 前端端口默认 `5173`，若被占用会自动顺延。
+- 后端端口默认 `3001`，若被占用会自动选择可用端口，并同步给前端代理（前端 `/api/*` 始终可用）。
+
+### 3) 管理员密钥（可选）
+
+默认管理员密钥为 `dev-admin-token`。你可以新建 `.env` 覆盖：
+
+```bash
+ADMIN_TOKEN=replace-with-a-strong-random-string
+```
+
+可以参考示例文件：`.env.example`。
+
+## 访问入口
+
+- 前端：`http://localhost:5173/`（或自动顺延端口）
+- 管理员：`/admin`
+
+## API 概览
+
+- 健康检查：`GET /api/health`
+- 话题：
+  - `GET /api/topics`
+  - `POST /api/topics`
+  - `GET /api/topics/:id`
+  - `POST /api/topics/:id/comments`
+- 意见：
+  - `POST /api/opinions`
+- 管理员（只读）：
+  - `POST /api/admin/login`
+  - `GET /api/admin/opinions`
+  - `GET /api/admin/opinions/:id`
+
+管理员请求需在 Header 带 `x-admin-token: <ADMIN_TOKEN>`。
+
+## 目录结构
+
+- `src/`：前端页面与组件
+- `api/`：后端 API（Express）
+- `shared/`：前后端共享类型
+- `scripts/dev.ts`：本地开发启动脚本（自动端口 + 代理）
+
+## 部署
+
+- 只使用 Nginx（静态托管 + 反代 API）：见 [DEPLOY_NGINX.md](docs/DEPLOY_NGINX.md)
